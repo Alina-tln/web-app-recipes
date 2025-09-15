@@ -2,26 +2,36 @@ services:
 
   postgres:
     image: postgres:${SW_VERSION_TAG_POSTGRES}
-    restart: always
-    #command: -c ssl=on -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem -c ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${SOFTWARE_PASSWORD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       PGDATA: /var/lib/postgresql/data
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+    networks:
+      - dev_network
 
   pgadmin4:
     image: elestio/pgadmin:${SW_VERSION_TAG_PGADMIN}
-    restart: always
+    restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: ${ADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${ADMIN_PASSWORD}
       PGADMIN_LISTEN_PORT: 8080
     ports:
       - '8080:8080'
+    networks:
+      - dev_network
     volumes:
-      - ./servers.json:/pgadmin4/servers.json
+      - ./servers.json:/pgadmin4/servers.json:ro
+
+networks:
+  dev_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
