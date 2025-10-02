@@ -1,2 +1,2 @@
 # web-app-recipes
-Webb application development
+Web application development
