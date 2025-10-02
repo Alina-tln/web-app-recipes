@@ -16,13 +16,7 @@ async def setup_database(drop: bool = False):
     schemas = ["recipes", "users", "translations"]
 
     async with async_engine.begin() as conn:
-        # Creating schemas if not exist
-        for schema in schemas:
-            await conn.execute(text(f"CREATE SCHEMA IF NOT EXISTS {schema}"))
-
-    #Recreating tables
-        if drop:
-            await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
 

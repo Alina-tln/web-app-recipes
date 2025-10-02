@@ -2,7 +2,7 @@ import pytest
 
 from database import engine, settings
 from db_base import Base
-from sqlalchemy.orm import  Session
+from sqlalchemy.orm import Session
 
 
 @pytest.fixture(scope="session")

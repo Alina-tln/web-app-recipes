@@ -4,17 +4,24 @@ services:
     image: postgres:${SW_VERSION_TAG_POSTGRES}
     restart: unless-stopped
     environment:
+      #Main DB for DEV
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       PGDATA: /var/lib/postgresql/data
+
+      # DB for tests:
+      TEST_DB_NAME: ${TEST_DB_NAME}
+      TEST_DB_USER: ${TEST_DB_USER}
+      TEST_DB_PASSWORD: ${TEST_DB_PASSWORD}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/postgresql/data
     ports:
       - '5432:5432'
     networks:
       dev_network:
-        ipv4_address: 172.18.0.2
+        ipv4_address: 172.18.0.254
 
   pgadmin4:
     image: elestio/pgadmin:${SW_VERSION_TAG_PGADMIN}
@@ -26,7 +33,8 @@ services:
     ports:
       - '8080:8080'
     networks:
-      - dev_network
+      dev_network:
+        ipv4_address: 172.18.0.253
     volumes:
       - ./servers.json:/pgadmin4/servers.json:ro
 
@@ -39,4 +47,4 @@ networks:
         - subnet: 172.18.0.0/16
 
 volumes:
-  postgres_data:
+  db_data:
