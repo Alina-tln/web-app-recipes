@@ -16,3 +16,6 @@ __pycache__/
 
 # Local data files
 data/
+
+.coverage
+db_3schemas.sql
