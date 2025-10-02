@@ -1,0 +1,19 @@
+#Login and password for db
+.env
+.env.test
+
+# IDE
+.idea/
+
+# Virtual environment files
+.venv/
+
+# Python compiled files
+__pycache__/
+*.pyc
+
+# Local data files
+data/
+
+.coverage
+db_3schemas.sql
