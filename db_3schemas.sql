@@ -54,7 +54,7 @@ CREATE TABLE recipes.recipe_ingredients (
                                             ingredient_id BIGINT NOT NULL REFERENCES recipes.ingredients(id) ON DELETE CASCADE,
                                             quantity DECIMAL,
                                             unit TEXT,
-                                            language_code VARCHAR(5) NOT NULL,
+                                            language_code NOT NULL REFERENCES translations.languages(id),
                                             PRIMARY KEY (recipe_id, ingredient_id, language_code)
 );
 
@@ -62,7 +62,7 @@ CREATE TABLE recipes.user_recipes (
                                       id BIGSERIAL PRIMARY KEY,
                                       base_recipe_id BIGINT NOT NULL REFERENCES recipes.recipes(id) ON DELETE CASCADE,
                                       user_id BIGINT NOT NULL REFERENCES users.users(id) ON DELETE CASCADE,
-                                      language_code VARCHAR(5) NOT NULL,
+                                      language_code NOT NULL REFERENCES translations.languages(id),
                                       title TEXT NOT NULL,
                                       description TEXT,
                                       instructions TEXT,
@@ -74,7 +74,7 @@ CREATE TABLE recipes.user_recipe_ingredients (
                                                  ingredient_id BIGINT NOT NULL REFERENCES recipes.ingredients(id) ON DELETE CASCADE,
                                                  quantity DECIMAL,
                                                  unit TEXT,
-                                                 language_code VARCHAR(5) NOT NULL,
+                                                 language_code NOT NULL REFERENCES translations.languages(id),
                                                  UNIQUE (user_recipe_id, ingredient_id, language_code)
 );
 
@@ -89,7 +89,7 @@ CREATE TABLE translations.languages (
 CREATE TABLE translations.ingredient_translations (
                                                       id BIGSERIAL PRIMARY KEY,
                                                       ingredient_id BIGINT NOT NULL REFERENCES recipes.ingredients(id) ON DELETE CASCADE,
-                                                      language_code VARCHAR(5) NOT NULL REFERENCES translations.languages(language_code),
+                                                      language_code BIGINT NOT NULL REFERENCES translations.languages(id),
                                                       name TEXT NOT NULL,
                                                       UNIQUE (ingredient_id, language_code)
 );
@@ -97,7 +97,7 @@ CREATE TABLE translations.ingredient_translations (
 CREATE TABLE translations.recipe_translations (
                                                   id BIGSERIAL PRIMARY KEY,
                                                   recipe_id BIGINT NOT NULL REFERENCES recipes.recipes(id) ON DELETE CASCADE,
-                                                  language_code VARCHAR(5) NOT NULL REFERENCES translations.languages(language_code),
+                                                  language_code BIGINT NOT NULL REFERENCES translations.languages(id),
                                                   title TEXT NOT NULL,
                                                   description TEXT,
                                                   instructions TEXT,
@@ -106,3 +106,10 @@ CREATE TABLE translations.recipe_translations (
 
 CREATE INDEX idx_recipe_translations_id_lang ON translations.recipe_translations (recipe_id, language_code);
 CREATE INDEX idx_user_recipes_user_id ON recipes.user_recipes (user_id, base_recipe_id);
+
+
+
+
+--Create test_user and test_db for tests
+CREATE USER test_user WITH PASSWORD 'le8cyxoM';
+CREATE DATABASE test_db OWNER test_user;

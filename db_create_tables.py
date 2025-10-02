@@ -1,0 +1,31 @@
+import asyncio
+from db_base import Base
+from database import async_session, async_engine
+from sqlalchemy import text
+import recipe_service.models.recipes
+import recipe_service.models.ingredients
+import user_service.models.users
+import user_service.models.groups
+import translation_service.models.translations
+
+# async def get_session():
+#     async with async_session() as sess:
+#         yield sess
+
+async def setup_database(drop: bool = False):
+    schemas = ["recipes", "users", "translations"]
+
+    async with async_engine.begin() as conn:
+        # Creating schemas if not exist
+        for schema in schemas:
+            await conn.execute(text(f"CREATE SCHEMA IF NOT EXISTS {schema}"))
+
+    #Recreating tables
+        if drop:
+            await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
+
+
+if __name__ == "__main__":
+    asyncio.run(setup_database(drop=True))  # drop=True for dev
+    print("Creating tables is complete ✅")

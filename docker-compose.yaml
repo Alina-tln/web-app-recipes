@@ -13,7 +13,8 @@ services:
     ports:
       - '5432:5432'
     networks:
-      - dev_network
+      dev_network:
+        ipv4_address: 172.18.0.2
 
   pgadmin4:
     image: elestio/pgadmin:${SW_VERSION_TAG_PGADMIN}
@@ -32,6 +33,10 @@ services:
 networks:
   dev_network:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
 
 volumes:
   postgres_data:
