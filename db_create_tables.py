@@ -8,12 +8,8 @@ import user_service.models.users
 import user_service.models.groups
 import translation_service.models.translations
 
-# async def get_session():
-#     async with async_session() as sess:
-#         yield sess
 
 async def setup_database(drop: bool = False):
-    schemas = ["recipes", "users", "translations"]
 
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, BigInteger, String, ForeignKey
 from db_base import Base
-from .recipes import RecipeIngredient
+#from .recipes import RecipeIngredient
 from sqlalchemy.orm import relationship
 
 class IngredientCategory(Base):
@@ -23,9 +23,10 @@ class Ingredient(Base):
 
     #Relationship for ORM
     categories = relationship("Category", secondary=IngredientCategory.__table__, back_populates="ingredients")
-    recipes = relationship("Recipe", secondary=RecipeIngredient.__table__, back_populates="ingredients")
-    user_recipes = relationship("UserRecipeIngredient", back_populates="ingredient")
-    translations = relationship("IngredientTranslation", back_populates="ingredient")
+    #TODO
+    #recipes = relationship("Recipe", secondary="recipe_ingredients", back_populates="ingredients") #todo secondary=RecipeIngredient.__table__
+    #user_recipes = relationship("UserRecipeIngredient", back_populates="ingredient")
+    #translations = relationship("IngredientTranslation", back_populates="ingredient")
 
     def __repr__(self):
         return f"<Ingredient(id={self.id}, name='{self.name}')>"
