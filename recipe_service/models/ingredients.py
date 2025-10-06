@@ -24,9 +24,9 @@ class Ingredient(Base):
     #Relationship for ORM
     categories = relationship("Category", secondary=IngredientCategory.__table__, back_populates="ingredients")
     #TODO
-    #recipes = relationship("Recipe", secondary="recipe_ingredients", back_populates="ingredients") #todo secondary=RecipeIngredient.__table__
-    #user_recipes = relationship("UserRecipeIngredient", back_populates="ingredient")
-    #translations = relationship("IngredientTranslation", back_populates="ingredient")
+    # recipes = relationship("Recipe", secondary="recipe_ingredients", back_populates="ingredients") #todo secondary=RecipeIngredient.__table__
+    # user_recipes = relationship("UserRecipeIngredient", back_populates="ingredient")
+    # translations = relationship("IngredientTranslation", back_populates="ingredient")
 
     def __repr__(self):
         return f"<Ingredient(id={self.id}, name='{self.name}')>"

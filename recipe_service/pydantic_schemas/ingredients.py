@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, constr
+
 
 class BaseSchema(BaseModel):
     model_config = ConfigDict(extra="forbid", from_attributes=True)
@@ -9,7 +10,7 @@ class IngredientSchema(BaseSchema):
 
 
 class CategoryCreateSchema(BaseSchema):
-    name: str = Field(
+    name: constr(min_length=2, max_length=100) = Field(
         ...,
         min_length=2,
         max_length=100,
@@ -18,7 +19,7 @@ class CategoryCreateSchema(BaseSchema):
     )
 
 class CategoryUpdateSchema(BaseSchema):
-    name: str | None = Field(
+    name: constr(min_length=2, max_length=100) | None = Field(
         default=None,
         max_length=100,
         examples=["Fruits"],
@@ -26,5 +27,11 @@ class CategoryUpdateSchema(BaseSchema):
     )
 
 class CategoryReadSchema(BaseSchema):
+    Result: bool
     id: int = Field(..., examples=[1])
-    name: str = Field(..., examples=["Fruits"])
+    name: constr(min_length=2, max_length=100) = Field(..., examples=["Fruits"])
+
+class DeleteResponseSchema(BaseModel):
+    result: bool
+    id: int
+    name: str
