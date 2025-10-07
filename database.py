@@ -4,6 +4,11 @@ from sqlalchemy.orm import sessionmaker
 
 from config import settings
 
+#---------------------------------------------
+# SYNC ENGINE
+#---------------------------------------------
+
+
 engine = create_engine(
     url=settings.database_url,
     echo=True,
@@ -13,7 +18,10 @@ engine = create_engine(
 
 session = sessionmaker(engine)
 
-# Async engine
+#---------------------------------------------
+# ASYNC ENGINE
+#---------------------------------------------
+
 async_engine = create_async_engine(
     url=settings.database_url,
     echo=True,

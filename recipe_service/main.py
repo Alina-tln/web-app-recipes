@@ -110,7 +110,7 @@ async def add_category(
         # All database logic has been moved to service.category_service.create_category
         new_category = await service.create_category(category.name)
         logger.info(f"Added category: {new_category.name} (id={new_category.id})")
-        return {"Result": True, "id": new_category.id, "name": new_category.name}
+        return new_category
 
     except CategoryAlreadyExists as e:
         # Convert a custom exception to HTTP 409 Conflict
