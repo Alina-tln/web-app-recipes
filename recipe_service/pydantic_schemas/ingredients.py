@@ -26,12 +26,12 @@ class CategoryUpdateSchema(BaseSchema):
         description="New category name"
     )
 
+
 class CategoryReadSchema(BaseSchema):
-    Result: bool
     id: int = Field(..., examples=[1])
     name: constr(min_length=2, max_length=100) = Field(..., examples=["Fruits"])
 
 class DeleteResponseSchema(BaseModel):
-    result: bool
+    Result: bool
     id: int
     name: str

@@ -1,11 +1,12 @@
 """
 Custom exceptions
 """
-
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Optional, Sequence
 from recipe_service.models import ingredients as models
+import logging
 
 class CategoryAlreadyExists(Exception):
     """An exception is thrown when a category with the same name already exists."""
@@ -58,11 +59,24 @@ class CategoryService:
         if not category:
             raise CategoryNotFound(category_id)
 
-        category.name = new_name
-        await self.session.commit()
-        await self.session.refresh(category)
+        if category.name == new_name:
+            logging.info(f"No change in category name (id={category_id}, name={new_name})")
+            return category
 
-        return category
+        existing = await self.session.execute(
+            select(self.Category).where(self.Category.name == new_name)
+        )
+        if existing.scalar_one_or_none():
+            raise CategoryAlreadyExists(new_name)
+
+        category.name = new_name
+        try:
+            await self.session.commit()
+            await self.session.refresh(category)
+            return category
+        except IntegrityError:
+            await self.session.rollback()
+            raise CategoryAlreadyExists(new_name)
 
     async def delete_category(self, category_id: int) -> str:
         """Deletes a category by id"""

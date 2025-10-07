@@ -139,7 +139,7 @@ async def get_categories(service: CategoryServiceDep):
     response_model=schemas.CategoryReadSchema,
     openapi_extra=category_examples["get_one"])
 @handle_not_found
-async def get_category(
+async def get_category_by_id(
         category_id: int,
         service: CategoryServiceDep
 ):
@@ -160,9 +160,16 @@ async def update_category(
         updated: schemas.CategoryUpdateSchema,
         service: CategoryServiceDep
 ):
-        updated_category = await service.update_category(category_id, updated.name)
-        logger.info(f"Updated category ID={updated_category.id} -> {updated_category.name}")
-        return {"id": updated_category.id, "name": updated_category.name}
+        try:
+            updated_category = await service.update_category(category_id, updated.name)
+            logger.info(f"Updated category ID={updated_category.id} -> {updated_category.name}")
+            return updated_category
+
+        except CategoryAlreadyExists as e:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=str(e)
+            )
 
 
 # DELETE
