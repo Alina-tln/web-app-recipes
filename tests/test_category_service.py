@@ -3,6 +3,7 @@ from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Callable, Any, Generator
 
+from recipe_service.core.dependencies import get_session
 from recipe_service.main import app
 from recipe_service.pydantic_schemas.ingredients import CategoryReadSchema
 
@@ -24,10 +25,9 @@ def override_get_session(setup_async_session: AsyncSession) -> Generator[None, A
         yield setup_async_session
 
     # Apply the override for the duration of the tests
-    app.dependency_overrides[app.dependency_overrides.get("get_session", object())] = _get_session_override
+    app.dependency_overrides[app.dependency_overrides.get("get_session", object())] = _get_session_override #TODO
     # In SQLAlchemy 2.0 with AsyncSession, you must use an explicit import
     # from the module where the get_session function is defined
-    from recipe_service.main import get_session
     app.dependency_overrides[get_session] = _get_session_override
 
     yield

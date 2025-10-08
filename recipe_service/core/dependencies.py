@@ -1,0 +1,41 @@
+# 1. Standard library imports
+import logging
+from typing import Annotated
+
+# 2. Third-party imports
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+# 3. Local application imports
+from database import async_session
+from recipe_service.services.category_service import CategoryService
+
+# ----------------------------------------------------------
+# Setting up logging
+# ----------------------------------------------------------
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+)
+logger = logging.getLogger("recipe_service")
+
+# ----------------------------------------------------------
+# Session Dependency
+# ----------------------------------------------------------
+async def get_session():
+    async with async_session() as session:
+        yield session
+
+SessionDep = Annotated[AsyncSession, Depends(get_session)]
+
+# ----------------------------------------------------------
+# Service Dependencies
+# ----------------------------------------------------------
+
+def get_category_service(session: SessionDep) -> CategoryService:
+    """A dependency that provides an instance of CategoryService."""
+    return CategoryService(session)
+
+CategoryServiceDep = Annotated[CategoryService, Depends(get_category_service)]
+
+
