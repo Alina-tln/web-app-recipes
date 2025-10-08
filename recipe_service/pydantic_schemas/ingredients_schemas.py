@@ -43,7 +43,7 @@ class IngredientCreateSchema(BaseSchema):
         description="Ingredient name",
         examples=["Cheese"]
     )
-    category_ids: List[int] = Field(..., examples=[1, 2])
+    categories: List[int] = Field(..., examples=[1, 2])
 
 class IngredientUpdateSchema(BaseSchema):
     name: constr(min_length=2, max_length=100) | None = Field(
@@ -52,12 +52,12 @@ class IngredientUpdateSchema(BaseSchema):
         examples=["Mozzarella"],
         description="New ingredient name"
     )
-    category_ids: List[int] | None = Field(default=None, examples=[2])
+    categories: List[int] | None = Field(default=None, examples=[2])
 
 class IngredientReadSchema(BaseSchema):
     id: int = Field(..., examples=[1])
     name: constr(min_length=2, max_length=100) = Field(..., examples=["Fruits"])
-    categories: List[str]
+    categories: List[CategoryReadSchema]
 
 
 # ----------------------------------------------------------

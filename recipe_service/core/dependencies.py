@@ -44,6 +44,6 @@ def get_ingredient_service(session: SessionDep) -> IngredientService:
     """A dependency that provides an instance of IngredientService."""
     return IngredientService(session)
 
-IngredientServiceDep = Annotated[CategoryService, Depends(get_category_service)]
+IngredientServiceDep = Annotated[CategoryService, Depends(get_ingredient_service)]
 
 

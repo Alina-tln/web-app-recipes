@@ -7,7 +7,8 @@ ingredient_examples = {
                     "description": "Create ingredient with a category",
                     "value": {
                         "name": "Cheese",
-                        "category_ids": [1,2]
+                        "categories": [{"id": 1,
+                                        "name": "Dairy"}]
                     },
                 }
             }
@@ -17,7 +18,7 @@ ingredient_examples = {
                 "description": "Ingredient successfully created",
                 "content": {
                     "application/json": {
-                        "example": {"id": 1, "name": "Cheese"},
+                        "example": {"id": 1, "name": "Cheese", "categories": [{"id": 1, "name": "Dairy"}]},
                     }
                 },
             }
@@ -31,9 +32,23 @@ ingredient_examples = {
                 "content": {
                     "application/json": {
                         "example": [
-                            {"id": 1, "name": "Cheese", "category_ids": [1,2]},
-                            {"id": 2, "name": "Milk", "category_ids": [1]},
-                            {"id": 3, "name": "Prosciutto", "category_ids": [2]},
+                            {"id": 1,
+                             "name": "Cheese",
+                             "categories": [{"id": 1,
+                                            "name": "Dairy"},
+                                            {"id": 2,
+                                             "name": "Snacks"}]
+                             },
+                            {"id": 2,
+                             "name": "Milk",
+                             "categories": [{"id": 1,
+                                             "name": "Dairy"}]
+                             },
+                            {"id": 3,
+                             "name": "Prosciutto",
+                             "categories": [{"id": 2,
+                                             "name": "Snacks"}]
+                             },
                         ]
                     }
                 },
@@ -48,7 +63,13 @@ ingredient_examples = {
                 "content": {
                     "application/json": {
                         "example": [
-                            {"id": 1, "name": "Cheese", "category_ids": [1,2]}
+                            {"id": 1,
+                             "name": "Cheese",
+                             "categories": [{"id": 1,
+                                             "name": "Dairy"},
+                                            {"id": 2,
+                                             "name": "Snacks"}]
+                             }
                         ]
                     }
                 },
@@ -61,7 +82,10 @@ ingredient_examples = {
             "examples": {
                 "rename": {
                     "summary": "Change ingredient",
-                    "value": {"name": "Mozzarella", "category_ids": [3]}
+                    "value": {"name": "Mozzarella",
+                              "categories": [{"id": 1,
+                                             "name": "Dairy"}]
+                              }
                 }
             }
         },
@@ -70,7 +94,10 @@ ingredient_examples = {
                 "description": "Ingredient successfully updated",
                 "content": {
                     "application/json": {
-                        "example": {"id": 1, "name": "Mozzarella", "category_ids": [3]},
+                        "example": {"id": 1, "name": "Mozzarella",
+                                    "categories": [{"id": 1,
+                                                    "name": "Dairy"}]
+                                    },
                     }
                 },
             }
@@ -83,7 +110,9 @@ ingredient_examples = {
                 "description": "Category successfully deleted",
                 "content": {
                     "application/json": {
-                        "example": {"result": True, "message": "Ingredient deleted"},
+                        "example": {"Result": "Ingredient deleted",
+                                    "id": 1,
+                                    "name": "Cheese"},
                     }
                 },
             }

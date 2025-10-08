@@ -51,8 +51,8 @@ async def add_ingredient(
 ):
     try:
         # All database logic has been moved to service.ingredient_service
-        new_ingredient = await service.create_ingredient(ingredient.name)
-        logger.info(f"Added ingredient: {new_ingredient.name} (id={new_ingredient.id})")
+        new_ingredient = await service.create_ingredient(ingredient.name, ingredient.categories)
+        logger.info(f"Added ingredient: {new_ingredient.name} (id={new_ingredient.id}, category={new_ingredient.categories})")
         return new_ingredient
 
     except IngredientAlreadyExists as e:

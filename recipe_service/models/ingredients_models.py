@@ -22,7 +22,7 @@ class Ingredient(Base):
     name = Column(String(100), nullable=False)
 
     #Relationship for ORM
-    categories = relationship("Category", secondary=IngredientCategory.__table__, back_populates="ingredients")
+    categories = relationship("Category", secondary=IngredientCategory.__table__, back_populates="ingredients",lazy="selectin")
     recipes = relationship("Recipe", secondary=RecipeIngredient.__table__, back_populates="ingredients")
     user_recipes = relationship("UserRecipeIngredient", back_populates="ingredient")
     translations = relationship("IngredientTranslation", back_populates="ingredient")
