@@ -23,8 +23,7 @@ class Ingredient(Base):
 
     #Relationship for ORM
     categories = relationship("Category", secondary=IngredientCategory.__table__, back_populates="ingredients")
-    #TODO
-    recipes = relationship("Recipe", secondary=RecipeIngredient.__table__, back_populates="ingredients") #todo secondary=RecipeIngredient.__table__
+    recipes = relationship("Recipe", secondary=RecipeIngredient.__table__, back_populates="ingredients")
     user_recipes = relationship("UserRecipeIngredient", back_populates="ingredient")
     translations = relationship("IngredientTranslation", back_populates="ingredient")
 

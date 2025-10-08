@@ -7,7 +7,7 @@ from fastapi import HTTPException, status, APIRouter
 
 # 3. Local application imports
 import recipe_service.pydantic_schemas.ingredients as schemas
-from recipe_service.examples import category_examples
+from recipe_service.examples.category_examples import category_examples
 
 from recipe_service.services.category_service import (
     CategoryAlreadyExists,
