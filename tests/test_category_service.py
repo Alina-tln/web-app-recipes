@@ -5,7 +5,7 @@ from typing import Callable, Any, Generator
 
 from recipe_service.core.dependencies import get_session
 from recipe_service.main import app
-from recipe_service.pydantic_schemas.ingredients import CategoryReadSchema
+from recipe_service.pydantic_schemas.ingredients_schemas import CategoryReadSchema
 
 # The setup_async_session fixture from conftest.py will provide us with a transactional AsyncSession
 

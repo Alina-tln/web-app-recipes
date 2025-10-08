@@ -1,6 +1,6 @@
 import pytest
-from recipe_service.models.recipes import *
-from recipe_service.models.ingredients import *
+from recipe_service.models.recipes_models import *
+from recipe_service.models.ingredients_models import *
 from translation_service.models.translations import *
 from user_service.models.users import *
 from user_service.models.groups import *

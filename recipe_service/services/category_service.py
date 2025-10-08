@@ -1,16 +1,16 @@
-"""
-Custom exceptions
-"""
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from typing import Optional, Sequence, Any, Type, Coroutine
-from recipe_service.models import ingredients as models
+from typing import Sequence, Type
+
+from sqlalchemy.orm import InstrumentedAttribute
+
+from recipe_service.models import ingredients_models as models
 import logging
 
-from recipe_service.models.ingredients import Category
-
-
+# ----------------------------------------------------------
+# Custom exceptions
+# ----------------------------------------------------------
 class CategoryAlreadyExists(Exception):
     """An exception is thrown when a category with the same name already exists."""
     def __init__(self, name: str):
@@ -22,6 +22,9 @@ class CategoryNotFound(Exception):
         super().__init__(f"Category with ID {category_id} not found.")
 
 
+# ----------------------------------------------------------
+# Category service
+# ----------------------------------------------------------
 class CategoryService:
     """Service class for managing ingredient categories."""
 
@@ -52,14 +55,14 @@ class CategoryService:
         result = await self.session.execute(select(self.Category).order_by(self.Category.id))
         return result.scalars().all()
 
-    async def get_category_by_id(self, category_id: int) -> Type[Category]:
+    async def get_category_by_id(self, category_id: int) -> Type[models.Category]:
         """Return category by id"""
         category = await self.session.get(self.Category, category_id)
         if category is None:
             raise CategoryNotFound(category_id)
         return category
 
-    async def update_category(self, category_id: int, new_name: str) -> models.Category:
+    async def update_category(self, category_id: int, new_name: str) -> Type[models.Category]:
         """Updates a category by id"""
         category = await self.get_category_by_id(category_id)
         if not category:
@@ -84,11 +87,31 @@ class CategoryService:
             await self.session.rollback()
             raise CategoryAlreadyExists(new_name)
 
-    async def delete_category(self, category_id: int) -> str:
+    async def delete_category(self, category_id: int) -> InstrumentedAttribute:
         """Deletes a category by id"""
         category = await self.get_category_by_id(category_id)
+
         if not category:
             raise CategoryNotFound(category_id)
+
+        if category.name == "noname":
+            raise ValueError("Cannot delete default category")
+
+        default_category = await self.session.scalar(
+            select(models.Category).where(models.Category.name == "noname")
+        )
+        if not default_category:
+            default_category = models.Category(name="noname")
+            self.session.add(default_category)
+            await self.session.commit()
+            await self.session.refresh(default_category)
+
+        ingredients = await self.session.scalars(select(models.Ingredient))
+        for ing in ingredients:
+            if len(ing.categories) == 1 and ing.categories[0].id == category.id:
+                ing.categories = [default_category]
+            else:
+                ing.categories = [c for c in ing.categories if c.id != category.id]
 
         deleted_name = category.name
         await self.session.delete(category)

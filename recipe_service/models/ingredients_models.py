@@ -1,14 +1,14 @@
 from sqlalchemy import Column, BigInteger, String, ForeignKey
 from db_base import Base
-from .recipes import RecipeIngredient
+from .recipes_models import RecipeIngredient
 from sqlalchemy.orm import relationship
 
 class IngredientCategory(Base):
     __tablename__ = "ingredient_categories"
     __table_args__ = {"schema": "recipes"}
 
-    ingredient_id = Column(BigInteger, ForeignKey("recipes.ingredients.id"), primary_key=True)
-    category_id = Column(BigInteger, ForeignKey("recipes.categories.id"), primary_key=True)
+    ingredient_id = Column(BigInteger, ForeignKey("recipes.ingredients.id", ondelete="CASCADE"), primary_key=True)
+    category_id = Column(BigInteger, ForeignKey("recipes.categories.id", ondelete="CASCADE"), primary_key=True)
 
     def __repr__(self):
         return f"<IngredientCategory(ingredient_id={self.ingredient_id}, category_id={self.category_id})>"

@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 import uvicorn
 
-from recipe_service.routers.ingredients import category_router
+from recipe_service.routers.ingredients import category_router, ingredient_router
 from recipe_service.core.dependencies import logger
 
 
@@ -40,6 +40,7 @@ async def db_error_middleware(request: Request, call_next):
         )
 
 app.include_router(category_router.router, tags=["Categories"])
+app.include_router(ingredient_router.router, tags=["Ingredients"])
 
 # ----------------------------------------------------------
 # Entrypoint (dev only)

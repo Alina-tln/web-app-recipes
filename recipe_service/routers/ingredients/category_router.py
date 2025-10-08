@@ -6,7 +6,7 @@ from functools import wraps
 from fastapi import HTTPException, status, APIRouter
 
 # 3. Local application imports
-import recipe_service.pydantic_schemas.ingredients as schemas
+import recipe_service.pydantic_schemas.ingredients_schemas as schemas
 from recipe_service.examples.category_examples import category_examples
 
 from recipe_service.services.category_service import (
@@ -21,7 +21,6 @@ from recipe_service.core.dependencies import (CategoryServiceDep, logger)
 # ----------------------------------------------------------
 router = APIRouter(
     prefix="/ingredient_category",
-    tags=["Categories"]
 )
 
 # ----------------------------------------------------------
@@ -43,7 +42,6 @@ def handle_not_found(func):
 @router.post(
     "",
     summary="Add new ingredient category",
-    tags=["Categories"],
     response_model=schemas.CategoryReadSchema,
     openapi_extra=category_examples["create"]
 )
@@ -67,7 +65,6 @@ async def add_category(
 # READ ALL
 @router.get("",
          summary="Get all ingredient categories",
-         tags=["Categories"],
          response_model=List[schemas.CategoryReadSchema],
          openapi_extra=category_examples["get_all"])
 async def get_categories(service: CategoryServiceDep):
@@ -80,7 +77,6 @@ async def get_categories(service: CategoryServiceDep):
 @router.get(
     "/{category_id}",
     summary="Get ingredient category by ID",
-    tags=["Categories"],
     response_model=schemas.CategoryReadSchema,
     openapi_extra=category_examples["get_one"])
 @handle_not_found
@@ -95,12 +91,11 @@ async def get_category_by_id(
 # UPDATE
 @router.put("/{category_id}",
          summary="Update ingredient category",
-         tags=["Categories"],
          response_model=schemas.CategoryReadSchema,
          openapi_extra=category_examples["update"]
          )
 @handle_not_found
-async def update_category(
+async def update_category_by_id(
         category_id: int,
         updated: schemas.CategoryUpdateSchema,
         service: CategoryServiceDep
@@ -121,7 +116,6 @@ async def update_category(
 @router.delete(
     "/{category_id}",
     summary="Delete ingredient category",
-    tags=["Categories"],
     response_model=schemas.DeleteResponseSchema)
 @handle_not_found
 async def delete_category(category_id: int, service: CategoryServiceDep):
