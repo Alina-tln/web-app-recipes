@@ -8,6 +8,9 @@ from sqlalchemy.orm import InstrumentedAttribute
 from recipe_service.models import ingredients_models as models
 import logging
 
+from recipe_service.models.ingredients_models import Category
+
+
 # ----------------------------------------------------------
 # Custom exceptions
 # ----------------------------------------------------------
@@ -32,19 +35,20 @@ class IngredientService:
         self.session = session
         self.Ingredient = models.Ingredient
 
-    async def create_ingredient(self, name: str, category_ids: list[int]) -> models.Ingredient:
+    async def create_ingredient(self, name: str, category_obj: list[int]) -> models.Ingredient:
         """Creates a new ingredient, checking for duplicates."""
-        if not category_ids:
+        if not category_obj:
             raise ValueError("Ingredient must belong to at least one category")
 
-        result = await self.session.execute(
+        existing = await self.session.execute(
             select(self.Ingredient).where(self.Ingredient.name == name)
         )
-        if result.scalar_one_or_none():
+        if existing.scalar_one_or_none():
             raise IngredientAlreadyExists(name=name)
 
-        categories = (await self.session.scalars(select(models.Category).where(models.Category.id.in_(category_ids)))).all()
-        if len(categories) != len(category_ids):
+        result = (await self.session.scalars(select(models.Category).where(models.Category.id.in_(category_obj))))
+        categories: Sequence[Category] = result.all()
+        if len(categories) != len(category_obj):
             raise ValueError("Some categories not found")
 
         new_ingredient = self.Ingredient(name=name, categories=categories)
