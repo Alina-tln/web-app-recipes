@@ -66,36 +66,34 @@ class IngredientService:
             raise IngredientNotFound(ingredient_id)
         return ingredient
 
-    async def update_ingredient(self, ingredient_id: int, new_name: str = None, category_ids: list[int] = None) -> Type[models.Ingredient]:
-        """Updates an ingredient by id"""
+    async def update_ingredient(self, ingredient_id: int, new_name: str | None = None, categories: list[int] | None = None) -> Type[models.Ingredient]:
+        """Updates ingredient by id (name and/or categories)."""
         ingredient = await self.get_ingredient_by_id(ingredient_id)
-        if not ingredient:
-            raise IngredientNotFound(ingredient_id)
+        updated = False
 
-        if ingredient.name == new_name:
-            logging.info(f"No change in ingredient name (id={ingredient_id}, name={new_name})")
-            return ingredient
-
-        if category_ids is not None:
-            categories = (await self.session.scalars(select(models.Category).where(models.Category.id.in_(category_ids)))).all()
-            if not categories:
+        if categories is not None:
+            category_obj = (await self.session.scalars(select(models.Category).where(models.Category.id.in_(categories)))).all()
+            if not category_obj:
                 raise ValueError("Ingredient must have at least one valid category")
-            ingredient.categories = categories
+            ingredient.categories = category_obj
+            updated = True
 
-        existing = await self.session.execute(
-            select(self.Ingredient).where(self.Ingredient.name == new_name)
-        )
-        if existing.scalar_one_or_none():
-            raise IngredientAlreadyExists(new_name)
+        if new_name and new_name != ingredient.name:
+            existing = await self.session.scalar(
+                select(self.Ingredient).where(self.Ingredient.name == new_name)
+            )
+            if existing:
+                raise IngredientAlreadyExists(new_name)
 
-        ingredient.name = new_name
-        try:
-            await self.session.commit()
-            await self.session.refresh(ingredient)
+            ingredient.name = new_name
+            updated = True
+
+        if not updated:
             return ingredient
-        except IntegrityError:
-            await self.session.rollback()
-            raise IngredientAlreadyExists(new_name)
+
+        await self.session.commit()
+        await self.session.refresh(ingredient)
+        return ingredient
 
     async def delete_ingredient(self, ingredient_id: int) -> InstrumentedAttribute:
         """Deletes a ingredient by id"""

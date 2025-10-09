@@ -101,15 +101,17 @@ async def update_ingredient_by_id(
         service: IngredientServiceDep
 ):
     try:
-        updated_ingredient = await service.update_ingredient_by_id(ingredient_id, updated.name)
+        updated_ingredient = await service.update_ingredient(
+            ingredient_id,
+            new_name=updated.name,
+            categories=updated.categories)
         logger.info(f"Updated ingredient ID={updated_ingredient.id} -> {updated_ingredient.name}")
         return updated_ingredient
 
     except IngredientAlreadyExists as e:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=409, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # DELETE
