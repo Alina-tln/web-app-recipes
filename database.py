@@ -4,9 +4,9 @@ from sqlalchemy.orm import sessionmaker
 
 from config import settings
 
-#---------------------------------------------
+# ---------------------------------------------
 # SYNC ENGINE
-#---------------------------------------------
+# ---------------------------------------------
 
 
 engine = create_engine(
@@ -18,9 +18,9 @@ engine = create_engine(
 
 session = sessionmaker(engine)
 
-#---------------------------------------------
+# ---------------------------------------------
 # ASYNC ENGINE
-#---------------------------------------------
+# ---------------------------------------------
 
 async_engine = create_async_engine(
     url=settings.database_url,

@@ -1,0 +1,28 @@
+[flake8]
+# Maximum line length (compatible with Black)
+max-line-length = 88
+
+# Directories and files to ignore
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    .idea,
+    data
+
+# Ignoring some errors that conflict with Black
+ignore =
+    E203,
+    W503
+
+# Enable additional plugins (if installed)
+# For example, flake8-bugbear catches potential bugs
+# flake8-import-order checks the order of imports
+select = B,C,E,F,W,T4,B9,D
+
+# Config flake8-import-order
+import-order-style = google
+application-import-names = recipe-web-app
+
+# Config flake8-docstrings
+docstring-convention = google

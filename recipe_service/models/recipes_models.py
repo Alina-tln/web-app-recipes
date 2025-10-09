@@ -1,18 +1,40 @@
 from db_base import Base
-from sqlalchemy import Column, BigInteger, ForeignKey, Integer, Text, TIMESTAMP, func, String, Float
 from sqlalchemy.orm import relationship
+from sqlalchemy import (
+    Column,
+    BigInteger,
+    ForeignKey,
+    Integer,
+    Text,
+    TIMESTAMP,
+    func,
+    String,
+    Float)
+
 
 class RecipeIngredient(Base):
     __tablename__ = "recipe_ingredients"
     __table_args__ = {"schema": "recipes"}
     __mapper_args__ = {"confirm_deleted_rows": False}
 
-    recipe_id = Column(BigInteger, ForeignKey("recipes.recipes.id", ondelete="CASCADE"), primary_key=True)
-    ingredient_id = Column(BigInteger, ForeignKey("recipes.ingredients.id", ondelete="CASCADE"),
-                           nullable=False, primary_key=True)
+    recipe_id = Column(
+        BigInteger,
+        ForeignKey("recipes.recipes.id", ondelete="CASCADE"),
+        primary_key=True
+    )
+    ingredient_id = Column(
+        BigInteger,
+        ForeignKey("recipes.ingredients.id", ondelete="CASCADE"),
+        nullable=False,
+        primary_key=True
+    )
     quantity = Column(Float, nullable=False)
     unit_id = Column(BigInteger, ForeignKey("recipes.units.id"), nullable=True)
-    language_id = Column(BigInteger, ForeignKey("translations.languages.id"), nullable=False)
+    language_id = Column(
+        BigInteger,
+        ForeignKey("translations.languages.id"),
+        nullable=False
+    )
 
     unit = relationship("Unit", back_populates="recipe_ingredients")
     language = relationship("Language", back_populates="recipe_ingredients")
@@ -98,4 +120,4 @@ class Unit(Base):
     recipe_ingredients = relationship("RecipeIngredient", back_populates="unit")
 
     def __repr__(self):
-        return f"<Unit(id={self.id}, symbol='{self.symbol}')>"
+        return f"<Unit(id={self.id}, symbol={self.symbol!r})>"

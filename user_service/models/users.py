@@ -1,8 +1,18 @@
 from db_base import Base
 from .groups import UserGroup
-from sqlalchemy import Column, BigInteger, TIMESTAMP, func, String, Boolean, text, UniqueConstraint
+from sqlalchemy import (
+    Column,
+    BigInteger,
+    TIMESTAMP,
+    func,
+    String,
+    Boolean,
+    text,
+    UniqueConstraint
+)
 
 from sqlalchemy.orm import relationship
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -24,7 +34,9 @@ class User(Base):
     user_recipes = relationship("UserRecipe", back_populates="user")
 
     # Relationships for UserGroups
-    groups = relationship("Group", secondary=UserGroup.__table__, back_populates="users")
+    groups = relationship("Group",
+                          secondary=UserGroup.__table__,
+                          back_populates="users")
 
     def __repr__(self):
-        return f"<User(id={self.id}, email='{self.email}')>"
+        return f"<User(id={self.id}, email={self.email!r})>"

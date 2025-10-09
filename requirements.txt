@@ -18,3 +18,8 @@ pytest-asyncio==1.2.0
 fastapi==0.118.0
 uvicorn==0.37.0
 httpx==0.28.1
+
+#Linting
+flake8==7.3.0
+flake8-bugbear==24.12.12
+flake8-import-order==0.19.2

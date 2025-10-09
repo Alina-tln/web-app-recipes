@@ -96,11 +96,13 @@ def sample_data(session):
         "user_recipe": user_recipe
     }
 
+
 def test_user_groups(sample_data, session):
     user = sample_data["user"]
     group = sample_data["group"]
     assert group in user.groups
     assert user in group.users
+
 
 def test_recipe_author_and_ingredients(sample_data, session):
     recipe = sample_data["recipe"]
@@ -111,11 +113,13 @@ def test_recipe_author_and_ingredients(sample_data, session):
     assert ingredient in recipe.ingredients
     assert recipe in ingredient.recipes
 
+
 def test_category_ingredient(sample_data, session):
     ingredient = sample_data["ingredient"]
     category = sample_data["category"]
     assert category in ingredient.categories
     assert ingredient in category.ingredients
+
 
 def test_translations(sample_data, session):
     lang = sample_data["lang"]
@@ -126,6 +130,7 @@ def test_translations(sample_data, session):
     assert any(t.language == lang for t in ingredient.translations)
     assert any(t.language == lang for t in recipe.translations)
     assert any(t.language == lang for t in unit.translations)
+
 
 def test_user_recipe_and_links(sample_data, session):
     user_recipe = sample_data["user_recipe"]

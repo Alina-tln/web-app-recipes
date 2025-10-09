@@ -1,12 +1,6 @@
 import asyncio
 from db_base import Base
-from database import async_session, async_engine
-from sqlalchemy import text
-import recipe_service.models.recipes_models
-import recipe_service.models.ingredients_models
-import user_service.models.users
-import user_service.models.groups
-import translation_service.models.translations
+from database import async_engine
 
 
 async def setup_database(drop: bool = False):

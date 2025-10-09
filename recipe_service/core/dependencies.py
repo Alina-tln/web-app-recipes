@@ -20,6 +20,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("recipe_service")
 
+
 # ----------------------------------------------------------
 # Session Dependency
 # ----------------------------------------------------------
@@ -29,6 +30,7 @@ async def get_session():
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
+
 # ----------------------------------------------------------
 # Service Dependencies
 # ----------------------------------------------------------
@@ -37,13 +39,14 @@ def get_category_service(session: SessionDep) -> CategoryService:
     """A dependency that provides an instance of CategoryService."""
     return CategoryService(session)
 
+
 CategoryServiceDep = Annotated[CategoryService, Depends(get_category_service)]
+
 
 # Ingredient Service
 def get_ingredient_service(session: SessionDep) -> IngredientService:
     """A dependency that provides an instance of IngredientService."""
     return IngredientService(session)
 
+
 IngredientServiceDep = Annotated[CategoryService, Depends(get_ingredient_service)]
-
-

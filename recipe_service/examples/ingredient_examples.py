@@ -18,7 +18,9 @@ ingredient_examples = {
                 "description": "Ingredient successfully created",
                 "content": {
                     "application/json": {
-                        "example": {"id": 1, "name": "Cheese", "categories": [{"id": 1, "name": "Dairy"}]},
+                        "example": {"id": 1,
+                                    "name": "Cheese",
+                                    "categories": [{"id": 1, "name": "Dairy"}]},
                     }
                 },
             }
