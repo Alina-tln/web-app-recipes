@@ -57,4 +57,4 @@ jobs:
       - name: Run tests with Pytest
         run: pytest --cov
         env:
-          DATABASE_URI: "postgresql://${{DB_USER}}:$${{DB_PASSWORD}}@postgres:5432/${{DB_NAME}}"
+          DATABASE_URI: "postgresql://${{ DB_USER }}:$${{ DB_PASSWORD }}@postgres:5432/${{ DB_NAME }}"
