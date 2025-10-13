@@ -1,4 +1,4 @@
-name: CI Build
+name: CI Lint and Test
 on:
   push:
     branches:
@@ -10,18 +10,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: python:3.9-slim
+    container: python:3.13-slim
 
     services:
       postgres:
-        image: postgres:alpine
+        image: postgres:17.6-alpine3.22
         ports:
           - 5432:5432
         env:
-          POSTGRES_PASSWORD: pgs3cr3t
-          POSTGRES_DB: testdb
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
         options: >-
-          --health-cmd pg_isready
+          --health-cmd="pg_isready -U ${{ secrets.DB_USER }}"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -37,10 +38,9 @@ jobs:
 
       - name: Lint with flake8
         run: |
-          flake8 service --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8  service --count --max-complexity=10 --max-line-length=127 --statistics
+          flake8 .
 
-      - name: Run unit tests with Nose
-        run: nosetests
+      - name: Run tests with Pytest
+        run: pytest --cov
         env:
-          DATABASE_URI: "postgresql://postgres:pgs3cr3t@postgres:5432/testdb"
+          DATABASE_URI: "postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@postgres:5432/${{ secrets.DB_NAME }}"
