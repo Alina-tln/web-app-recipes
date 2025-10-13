@@ -50,7 +50,7 @@ jobs:
           flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
 
 
-      - name: Install PostgreSQL client
+      - name: Install Postgres client
         run: apt-get update && apt-get install -y postgresql-client
 
       - name: Wait for Postgres
