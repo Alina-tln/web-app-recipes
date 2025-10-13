@@ -18,9 +18,9 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_USER: ${{secrets.DB_USER}}
-          POSTGRES_PASSWORD: ${{secrets.DB_PASSWORD}}
-          POSTGRES_DB: ${{secrets.DB_NAME}}
+          DB_USER: ${{secrets.DB_USER}}
+          DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+          DB_NAME: ${{secrets.DB_NAME}}
         options: >-
           --health-cmd="pg_isready -U postgres"
           --health-interval 10s
@@ -57,4 +57,4 @@ jobs:
       - name: Run tests with Pytest
         run: pytest --cov
         env:
-          DATABASE_URI: "postgresql://${{secrets.DB_USER}}:$${{secrets.DB_PASSWORD}}@postgres:5432/${{secrets.DB_NAME}}"
+          DATABASE_URI: "postgresql://${{DB_USER}}:$${{DB_PASSWORD}}@postgres:5432/${{DB_NAME}}"
