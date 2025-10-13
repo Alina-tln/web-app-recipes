@@ -63,10 +63,10 @@ jobs:
             echo "Waiting for Postgres..."
             sleep 3
           done
-#
-#      - name: Set up .env from secret
-#        run: echo "${{ secrets.ENV_FILE }}" > .env
-#        shell: bash
-#
-#      - name: Run tests with Pytest
-#        run: pytest --cov
+
+      - name: Set up .env from secret
+        run: echo "${{ secrets.ENV_FILE }}" > .env
+        shell: bash
+
+      - name: Run tests with Pytest
+        run: pytest --cov
