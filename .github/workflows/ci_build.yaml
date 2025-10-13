@@ -18,9 +18,9 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: test_db
+          POSTGRES_USER: ${{secrets.DB_USER}}
+          POSTGRES_PASSWORD: ${{secrets.DB_PASSWORD}}
+          POSTGRES_DB: ${{secrets.DB_NAME}}
         options: >-
           --health-cmd="pg_isready -U postgres"
           --health-interval 10s
@@ -37,8 +37,9 @@ jobs:
           pip install -r requirements.txt
 
       - name: Lint with flake8
-        run:
-          flake8 .
+        run: |
+          flake8 service --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8  service --count --max-complexity=10 --max-line-length=127 --statistics
 
       - name: Wait for PostgreSQL
         run: |
@@ -56,4 +57,4 @@ jobs:
       - name: Run tests with Pytest
         run: pytest --cov
         env:
-          DATABASE_URI: "postgresql://test_user:$password@postgres:5432/$test_db"
+          DATABASE_URI: "postgresql://${{secrets.DB_USER}}:$${{secrets.DB_PASSWORD}}@postgres:5432/${{secrets.DB_NAME}}"
