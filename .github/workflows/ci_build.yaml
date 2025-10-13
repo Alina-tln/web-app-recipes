@@ -51,13 +51,8 @@ jobs:
             echo "Waiting for Postgres..."
             sleep 3
           done
-        env:
-          DB_USER: ${{ secrets.DB_USER }}
 
       - name: Run tests with Pytest
         run: pytest --cov
         env:
-          DB_USER: ${{secrets.DB_USER}}
-          DB_PASSWORD: ${{secrets.DB_PASSWORD}}
-          DB_NAME: ${{secrets.DB_NAME}}
-          DATABASE_URI: "postgresql://${{ DB_USER }}:$${{ DB_PASSWORD }}@postgres:5432/${{ DB_NAME }}"
+          DATABASE_URI: "postgresql://${{ DB_USER }}:$${{ DB_PASSWORD }}@localhost:5432/${{ DB_NAME }}"
