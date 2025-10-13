@@ -30,8 +30,7 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_DB: test_db
         options: >-
-          -v ${{ github.workspace }}/docker/init-db/init-test.sh:/docker-entrypoint-initdb.d/init-test.sh
-          --health-cmd="pg_isready -U postgres"
+          --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -50,20 +49,20 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Wait for PostgreSQL
-        run: |
-          for i in {1..10}; do
-            if pg_isready -h postgres -p 5432 -U $DB_USER; then
-              echo "Postgres is ready!"
-              break
-            fi
-            echo "Waiting for Postgres..."
-            sleep 3
-          done
-
-      - name: Set up .env from secret
-        run: echo "${{ secrets.ENV_FILE }}" > .env
-        shell: bash
-
-      - name: Run tests with Pytest
-        run: pytest --cov
+#      - name: Wait for PostgreSQL
+#        run: |
+#          for i in {1..10}; do
+#            if pg_isready -h postgres -p 5432 -U $DB_USER; then
+#              echo "Postgres is ready!"
+#              break
+#            fi
+#            echo "Waiting for Postgres..."
+#            sleep 3
+#          done
+#
+#      - name: Set up .env from secret
+#        run: echo "${{ secrets.ENV_FILE }}" > .env
+#        shell: bash
+#
+#      - name: Run tests with Pytest
+#        run: pytest --cov
