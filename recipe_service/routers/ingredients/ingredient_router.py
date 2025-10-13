@@ -1,4 +1,4 @@
-#1. Standard library imports
+# 1. Standard library imports
 from typing import List
 from functools import wraps
 
@@ -23,6 +23,7 @@ router = APIRouter(
     prefix="/ingredients",
 )
 
+
 # ----------------------------------------------------------
 # Decorator for handling IngredientNotFound
 # ----------------------------------------------------------
@@ -31,9 +32,10 @@ def handle_not_found(func):
     async def wrapper(*args, **kwargs):
         try:
             return await func(*args, **kwargs)
-        except IngredientNotFound:
-            raise HTTPException(status_code=404, detail="Ingredient not found")
+        except IngredientNotFound as e:
+            raise HTTPException(status_code=404, detail="Ingredient not found") from e
     return wrapper
+
 
 # ----------------------------------------------------------
 # CRUD Endpoints
@@ -51,8 +53,15 @@ async def add_ingredient(
 ):
     try:
         # All database logic has been moved to service.ingredient_service
-        new_ingredient = await service.create_ingredient(ingredient.name, ingredient.categories)
-        logger.info(f"Added ingredient: {new_ingredient.name} (id={new_ingredient.id}, category={new_ingredient.categories})")
+        new_ingredient = await service.create_ingredient(
+            ingredient.name,
+            ingredient.categories
+        )
+        logger.info(
+            (f"Added ingredient: {new_ingredient.name} (id={new_ingredient.id},"
+             f"category={new_ingredient.categories})"
+             )
+        )
         return new_ingredient
 
     except IngredientAlreadyExists as e:
@@ -60,7 +69,8 @@ async def add_ingredient(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(e)
-        )
+        ) from e
+
 
 # READ ALL
 @router.get("",
@@ -72,6 +82,7 @@ async def get_ingredients(service: IngredientServiceDep):
     logger.info(f"Retrieved all ingredients, count={len(ingredients)}")
     # service returns a Sequence, FastAPI/Pydantic converts it to a List
     return ingredients
+
 
 # READ ONE
 @router.get(
@@ -87,6 +98,7 @@ async def get_ingredient_by_id(
     ingredient = await service.get_ingredient_by_id(ingredient_id)
     logger.info(f"Retrieved ingredient ID={ingredient.id}")
     return ingredient
+
 
 # UPDATE
 @router.put("/{ingredient_id}",
@@ -105,13 +117,17 @@ async def update_ingredient_by_id(
             ingredient_id,
             new_name=updated.name,
             categories=updated.categories)
-        logger.info(f"Updated ingredient ID={updated_ingredient.id} -> {updated_ingredient.name}")
+        logger.info(
+            (f"Updated ingredient ID={updated_ingredient.id} "
+             f"-> {updated_ingredient.name}"
+             )
+        )
         return updated_ingredient
 
     except IngredientAlreadyExists as e:
-        raise HTTPException(status_code=409, detail=str(e))
+        raise HTTPException(status_code=409, detail=str(e)) from e
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 # DELETE
@@ -122,5 +138,5 @@ async def update_ingredient_by_id(
 @handle_not_found
 async def delete_ingredient(ingredient_id: int, service: IngredientServiceDep):
     deleted = await service.delete_ingredient(ingredient_id)
-    logger.info(f"Deleted ingredient ID={ingredient_id}, name='{deleted}'")
+    logger.info(f"Deleted ingredient ID={ingredient_id}, name={deleted!r}")
     return {"Result": True, "id": ingredient_id, "name": deleted}

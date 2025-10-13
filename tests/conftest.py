@@ -7,10 +7,10 @@ from database import engine, settings, async_engine, async_session
 from db_base import Base
 from sqlalchemy.orm import Session
 
-#---------------------------------------------
-# FIXTURES FOR ORM MODELS TESTING (SYNC)
-#---------------------------------------------
 
+# ---------------------------------------------
+# FIXTURES FOR ORM MODELS TESTING (SYNC)
+# ---------------------------------------------
 @pytest.fixture(scope="session")
 def setup_db():
     print(f"{settings.DB_NAME}")
@@ -19,6 +19,7 @@ def setup_db():
     Base.metadata.create_all(engine)
     yield
     Base.metadata.drop_all(engine)
+
 
 @pytest.fixture
 def session(setup_db):
@@ -29,12 +30,14 @@ def session(setup_db):
         test_session.close()
         transaction.rollback()
 
-#---------------------------------------------
+
+# ---------------------------------------------
 # FIXTURES FOR FAST API TESTING (ASYNC)
-#---------------------------------------------
+# ---------------------------------------------
 @pytest.fixture(scope="session")
 def anyio_backend():
     return "asyncio"
+
 
 @pytest.fixture(scope="session")
 def event_loop():
@@ -42,6 +45,7 @@ def event_loop():
     loop = policy.new_event_loop()
     yield loop
     loop.close()
+
 
 @pytest_asyncio.fixture(scope="session")
 async def async_setup_db():
@@ -64,10 +68,9 @@ async def setup_async_session(async_setup_db):
         async with connection.begin() as transaction:
             test_async_session = async_session(
                 bind=connection,
-                join_transaction_mode ="create_savepoint")
+                join_transaction_mode="create_savepoint")
             try:
                 yield test_async_session
             finally:
                 await transaction.rollback()
                 await test_async_session.close()
-

@@ -1,4 +1,3 @@
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Sequence, Type
@@ -6,7 +5,6 @@ from typing import Sequence, Type
 from sqlalchemy.orm import InstrumentedAttribute
 
 from recipe_service.models import ingredients_models as models
-import logging
 
 from recipe_service.models.ingredients_models import Category
 
@@ -17,7 +15,8 @@ from recipe_service.models.ingredients_models import Category
 class IngredientAlreadyExists(Exception):
     """An exception is thrown when a ingredient with the same name already exists."""
     def __init__(self, name: str):
-        super().__init__(f"Ingredient '{name}' already exists.")
+        super().__init__(f"Ingredient {name!r} already exists.")
+
 
 class IngredientNotFound(Exception):
     """Exception thrown when ingredient by ID is not found."""
@@ -35,7 +34,11 @@ class IngredientService:
         self.session = session
         self.Ingredient = models.Ingredient
 
-    async def create_ingredient(self, name: str, category_obj: list[int]) -> models.Ingredient:
+    async def create_ingredient(
+            self,
+            name: str,
+            category_obj: list[int]
+    ) -> models.Ingredient:
         """Creates a new ingredient, checking for duplicates."""
         if not category_obj:
             raise ValueError("Ingredient must belong to at least one category")
@@ -46,7 +49,12 @@ class IngredientService:
         if existing.scalar_one_or_none():
             raise IngredientAlreadyExists(name=name)
 
-        result = (await self.session.scalars(select(models.Category).where(models.Category.id.in_(category_obj))))
+        result = (await self.session.scalars(select(models.Category)
+                                             .where(models.Category
+                                                    .id.in_(category_obj)
+                                                    )
+                                             )
+                  )
         categories: Sequence[Category] = result.all()
         if len(categories) != len(category_obj):
             raise ValueError("Some categories not found")
@@ -60,7 +68,9 @@ class IngredientService:
 
     async def get_all_ingredients(self) -> Sequence[models.Ingredient]:
         """Return all ingredients"""
-        result = await self.session.execute(select(self.Ingredient).order_by(self.Ingredient.id))
+        result = await self.session.execute(select(self.Ingredient)
+                                            .order_by(self.Ingredient.id)
+                                            )
         return result.scalars().all()
 
     async def get_ingredient_by_id(self, ingredient_id: int) -> Type[models.Ingredient]:
@@ -70,13 +80,21 @@ class IngredientService:
             raise IngredientNotFound(ingredient_id)
         return ingredient
 
-    async def update_ingredient(self, ingredient_id: int, new_name: str | None = None, categories: list[int] | None = None) -> Type[models.Ingredient]:
+    async def update_ingredient(
+            self,
+            ingredient_id: int,
+            new_name: str | None = None,
+            categories: list[int] | None = None
+    ) -> Type[models.Ingredient]:
         """Updates ingredient by id (name and/or categories)."""
         ingredient = await self.get_ingredient_by_id(ingredient_id)
         updated = False
 
         if categories is not None:
-            category_obj = (await self.session.scalars(select(models.Category).where(models.Category.id.in_(categories)))).all()
+            category_obj = ((
+                await self.session.scalars(select(models.Category)
+                                           .where(models.Category
+                                                  .id.in_(categories)))).all())
             if not category_obj:
                 raise ValueError("Ingredient must have at least one valid category")
             ingredient.categories = category_obj

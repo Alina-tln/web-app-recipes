@@ -1,9 +1,20 @@
 import pytest
-from recipe_service.models.recipes_models import *
-from recipe_service.models.ingredients_models import *
-from translation_service.models.translations import *
-from user_service.models.users import *
-from user_service.models.groups import *
+from recipe_service.models.recipes_models import (
+    Recipe,
+    UserRecipeIngredient,
+    UserRecipe,
+    Unit,
+    RecipeIngredient
+)
+from recipe_service.models.ingredients_models import Category, Ingredient
+from translation_service.models.translations import (
+    UnitTranslation,
+    RecipeTranslation,
+    IngredientTranslation,
+    Language
+)
+from user_service.models.users import User
+from user_service.models.groups import UserGroup, Group
 
 
 @pytest.fixture
@@ -17,8 +28,7 @@ def sample_data(session):
     unit = Unit(symbol="g")
     ingredient.categories.append(category)
 
-
-    #Add base objects and getting ids
+    # Add base objects and getting ids
     session.add_all([user, group, lang, category, ingredient, unit])
     session.flush()
 
@@ -27,7 +37,7 @@ def sample_data(session):
         user_id=user.id,
         group_id=group.id)
 
-    #Recipe
+    # Recipe
     recipe = Recipe(
         author_id=user.id,
         cooking_time_in_minutes=15)
@@ -38,7 +48,7 @@ def sample_data(session):
         language_id=lang.id
     )
 
-    #Add another objects and getting ids
+    # Add another objects and getting ids
     session.add_all([recipe, user_group, ingredient_translation])
     session.flush()
 

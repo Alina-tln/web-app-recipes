@@ -65,8 +65,8 @@ async def test_get_all_ingredients(setup_async_session, session):
     await session.commit()
     await session.refresh(cat)
 
-    ing1 = await service.create_ingredient("Olive oil", [cat.id])
-    ing2 = await service.create_ingredient("Sunflower oil", [cat.id])
+    await service.create_ingredient("Olive oil", [cat.id])
+    await service.create_ingredient("Sunflower oil", [cat.id])
 
     result = await service.get_all_ingredients()
 
@@ -114,7 +114,11 @@ async def test_update_ingredient_name_and_categories(setup_async_session, sessio
 
     ing = await service.create_ingredient("Sugar", [cat1.id])
 
-    updated = await service.update_ingredient(ing.id, new_name="Cane sugar", categories=[cat1.id, cat2.id])
+    updated = await service.update_ingredient(
+        ing.id,
+        new_name="Cane sugar",
+        categories=[cat1.id, cat2.id]
+    )
 
     assert updated.name == "Cane sugar"
     assert len(updated.categories) == 2
@@ -130,7 +134,7 @@ async def test_update_ingredient_duplicate_name(setup_async_session, session):
     await session.commit()
     await session.refresh(cat)
 
-    ing1 = await service.create_ingredient("Rice", [cat.id])
+    _ = await service.create_ingredient("Rice", [cat.id])
     ing2 = await service.create_ingredient("Wheat", [cat.id])
 
     with pytest.raises(IngredientAlreadyExists):

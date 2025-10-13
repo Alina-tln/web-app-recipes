@@ -6,10 +6,10 @@ from pydantic import BaseModel, Field, ConfigDict, constr
 class BaseSchema(BaseModel):
     model_config = ConfigDict(extra="forbid", from_attributes=True)
 
+
 # ----------------------------------------------------------
 # Category Schemas
 # ----------------------------------------------------------
-
 class CategoryCreateSchema(BaseSchema):
     name: constr(min_length=2, max_length=100) = Field(
         ...,
@@ -19,6 +19,7 @@ class CategoryCreateSchema(BaseSchema):
         examples=["Fruits"]
     )
 
+
 class CategoryUpdateSchema(BaseSchema):
     name: constr(min_length=2, max_length=100) | None = Field(
         default=None,
@@ -26,6 +27,7 @@ class CategoryUpdateSchema(BaseSchema):
         examples=["Fruits"],
         description="New category name"
     )
+
 
 class CategoryReadSchema(BaseSchema):
     id: int = Field(..., examples=[1])
@@ -45,6 +47,7 @@ class IngredientCreateSchema(BaseSchema):
     )
     categories: List[int] = Field(..., examples=[1, 2])
 
+
 class IngredientUpdateSchema(BaseSchema):
     name: constr(min_length=2, max_length=100) | None = Field(
         default=None,
@@ -53,6 +56,7 @@ class IngredientUpdateSchema(BaseSchema):
         description="New ingredient name"
     )
     categories: List[int] | None = Field(default=None, examples=[2])
+
 
 class IngredientReadSchema(BaseSchema):
     id: int = Field(..., examples=[1])

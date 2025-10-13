@@ -18,6 +18,3 @@ data/
 .coverage
 db_3schemas.sql
 
-# Take away!!!
-.github/
-

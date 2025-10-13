@@ -1,22 +1,24 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Callable, Any, Generator
+from typing import Any, Generator
 
 from recipe_service.core.dependencies import get_session
 from recipe_service.main import app
 from recipe_service.pydantic_schemas.ingredients_schemas import CategoryReadSchema
 
-# The setup_async_session fixture from conftest.py will provide us with a transactional AsyncSession
 
+# The setup_async_session fixture from conftest.py
+# will provide us with a transactional AsyncSession
 # ----------------------------------------------------------------------
 # Fixture for overriding the session dependency
 # ----------------------------------------------------------------------
-
 # In tests, we need the ability to "inject" a test session into FastAPI.
 # To do this, we override the get_session dependency.
 @pytest.fixture
-def override_get_session(setup_async_session: AsyncSession) -> Generator[None, Any, None]:
+def override_get_session(
+        setup_async_session: AsyncSession
+) -> Generator[None, Any, None]:
     """
     Creates an override function for the FastAPI get_session dependency,
     which always returns a test session with a transaction rollback.
@@ -25,7 +27,9 @@ def override_get_session(setup_async_session: AsyncSession) -> Generator[None, A
         yield setup_async_session
 
     # Apply the override for the duration of the tests
-    app.dependency_overrides[app.dependency_overrides.get("get_session", object())] = _get_session_override #TODO
+    app.dependency_overrides[
+        app.dependency_overrides.get("get_session", object())
+    ] = _get_session_override  # TODO
     # In SQLAlchemy 2.0 with AsyncSession, you must use an explicit import
     # from the module where the get_session function is defined
     app.dependency_overrides[get_session] = _get_session_override
@@ -46,13 +50,16 @@ async def client(override_get_session):
     An asynchronous HTTP client for calling FastAPI endpoints.
     Depends on override_get_session to use the test database.
     """
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+    async with AsyncClient(
+            transport=ASGITransport(app=app),
+            base_url="http://test"
+    ) as ac:
         yield ac
+
 
 # ----------------------------------------------------------------------
 # 3. CRUD FOR CATEGORIES
 # ----------------------------------------------------------------------
-
 @pytest.mark.asyncio
 async def test_create_category_success(client: AsyncClient):
     """Testing successful category creation."""
@@ -66,6 +73,7 @@ async def test_create_category_success(client: AsyncClient):
     assert data["name"] == "Dairy"
     assert "id" in data
     assert isinstance(data["id"], int) and data["id"] > 0
+
 
 @pytest.mark.asyncio
 async def test_create_category_already_exists(client: AsyncClient):
@@ -91,6 +99,7 @@ async def test_read_all_categories_empty(client: AsyncClient):
 
     assert response.status_code == 200
     assert response.json() == []
+
 
 @pytest.mark.asyncio
 async def test_read_all_categories_populated(client: AsyncClient):
@@ -120,6 +129,7 @@ async def test_read_category_by_id_success(client: AsyncClient):
     assert data["id"] == category_id
     assert data["name"] == "Nuts"
 
+
 @pytest.mark.asyncio
 async def test_read_category_by_id_not_found(client: AsyncClient):
     """Testing getting a non-existent category (HTTP 404)."""
@@ -127,6 +137,7 @@ async def test_read_category_by_id_not_found(client: AsyncClient):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Category not found"
+
 
 @pytest.mark.asyncio
 async def test_update_category_success(client: AsyncClient):
@@ -147,6 +158,7 @@ async def test_update_category_success(client: AsyncClient):
     get_resp = await client.get(f"/ingredient_category/{category_id}")
     assert get_resp.json()["name"] == "Bakery"
 
+
 @pytest.mark.asyncio
 async def test_update_category_not_found(client: AsyncClient):
     """Testing updating a non-existent category (HTTP 404)."""
@@ -157,6 +169,7 @@ async def test_update_category_not_found(client: AsyncClient):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Category not found"
+
 
 @pytest.mark.asyncio
 async def test_delete_category_success(client: AsyncClient):
@@ -174,6 +187,7 @@ async def test_delete_category_success(client: AsyncClient):
 
     get_resp = await client.get(f"/ingredient_category/{category_id}")
     assert get_resp.status_code == 404
+
 
 @pytest.mark.asyncio
 async def test_delete_category_not_found(client: AsyncClient):

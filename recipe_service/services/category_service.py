@@ -8,13 +8,15 @@ from sqlalchemy.orm import InstrumentedAttribute
 from recipe_service.models import ingredients_models as models
 import logging
 
+
 # ----------------------------------------------------------
 # Custom exceptions
 # ----------------------------------------------------------
 class CategoryAlreadyExists(Exception):
     """An exception is thrown when a category with the same name already exists."""
     def __init__(self, name: str):
-        super().__init__(f"Category '{name}' already exists.")
+        super().__init__(f"Category {name!r} already exists.")
+
 
 class CategoryNotFound(Exception):
     """Exception thrown when category by ID is not found."""
@@ -52,7 +54,9 @@ class CategoryService:
 
     async def get_all_categories(self) -> Sequence[models.Category]:
         """Return all categories"""
-        result = await self.session.execute(select(self.Category).order_by(self.Category.id))
+        result = await self.session.execute(select(self.Category)
+                                            .order_by(self.Category.id)
+                                            )
         return result.scalars().all()
 
     async def get_category_by_id(self, category_id: int) -> Type[models.Category]:
@@ -62,14 +66,20 @@ class CategoryService:
             raise CategoryNotFound(category_id)
         return category
 
-    async def update_category(self, category_id: int, new_name: str) -> Type[models.Category]:
+    async def update_category(
+            self,
+            category_id: int,
+            new_name: str
+    ) -> Type[models.Category]:
         """Updates a category by id"""
         category = await self.get_category_by_id(category_id)
         if not category:
             raise CategoryNotFound(category_id)
 
         if category.name == new_name:
-            logging.info(f"No change in category name (id={category_id}, name={new_name})")
+            logging.info(
+                f"No change in category name (id={category_id}, name={new_name})"
+            )
             return category
 
         existing = await self.session.execute(
@@ -83,9 +93,9 @@ class CategoryService:
             await self.session.commit()
             await self.session.refresh(category)
             return category
-        except IntegrityError:
+        except IntegrityError as e:
             await self.session.rollback()
-            raise CategoryAlreadyExists(new_name)
+            raise CategoryAlreadyExists(new_name) from e
 
     async def delete_category(self, category_id: int) -> InstrumentedAttribute:
         """Deletes a category by id"""

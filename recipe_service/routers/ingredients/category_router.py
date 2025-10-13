@@ -1,4 +1,4 @@
-#1. Standard library imports
+# 1. Standard library imports
 from typing import List
 from functools import wraps
 
@@ -23,6 +23,7 @@ router = APIRouter(
     prefix="/ingredient_category",
 )
 
+
 # ----------------------------------------------------------
 # Decorator for handling CategoryNotFound
 # ----------------------------------------------------------
@@ -31,9 +32,10 @@ def handle_not_found(func):
     async def wrapper(*args, **kwargs):
         try:
             return await func(*args, **kwargs)
-        except CategoryNotFound:
-            raise HTTPException(status_code=404, detail="Category not found")
+        except CategoryNotFound as e:
+            raise HTTPException(status_code=404, detail="Category not found") from e
     return wrapper
+
 
 # ----------------------------------------------------------
 # CRUD Endpoints
@@ -60,18 +62,20 @@ async def add_category(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(e)
-        )
+        ) from e
+
 
 # READ ALL
 @router.get("",
-         summary="Get all ingredient categories",
-         response_model=List[schemas.CategoryReadSchema],
-         openapi_extra=category_examples["get_all"])
+            summary="Get all ingredient categories",
+            response_model=List[schemas.CategoryReadSchema],
+            openapi_extra=category_examples["get_all"])
 async def get_categories(service: CategoryServiceDep):
     categories = await service.get_all_categories()
     logger.info(f"Retrieved all categories, count={len(categories)}")
     # service returns a Sequence, FastAPI/Pydantic converts it to a List
     return categories
+
 
 # READ ONE
 @router.get(
@@ -88,12 +92,13 @@ async def get_category_by_id(
     logger.info(f"Retrieved category ID={category.id}")
     return category
 
+
 # UPDATE
 @router.put("/{category_id}",
-         summary="Update ingredient category",
-         response_model=schemas.CategoryReadSchema,
-         openapi_extra=category_examples["update"]
-         )
+            summary="Update ingredient category",
+            response_model=schemas.CategoryReadSchema,
+            openapi_extra=category_examples["update"]
+            )
 @handle_not_found
 async def update_category_by_id(
         category_id: int,
@@ -102,14 +107,16 @@ async def update_category_by_id(
 ):
     try:
         updated_category = await service.update_category(category_id, updated.name)
-        logger.info(f"Updated category ID={updated_category.id} -> {updated_category.name}")
+        logger.info(
+            f"Updated category ID={updated_category.id} -> {updated_category.name}"
+        )
         return updated_category
 
     except CategoryAlreadyExists as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(e)
-        )
+        ) from e
 
 
 # DELETE
@@ -120,5 +127,5 @@ async def update_category_by_id(
 @handle_not_found
 async def delete_category(category_id: int, service: CategoryServiceDep):
     deleted_name = await service.delete_category(category_id)
-    logger.info(f"Deleted category ID={category_id}, name='{deleted_name}'")
+    logger.info(f"Deleted category ID={category_id}, name={deleted_name!r}")
     return {"Result": True, "id": category_id, "name": deleted_name}
