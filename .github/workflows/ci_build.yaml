@@ -64,6 +64,12 @@ jobs:
             sleep 3
           done
 
+      - name: Create test schemas
+        run: |
+          for schema in users recipes translations; do
+            PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "CREATE SCHEMA IF NOT EXISTS $schema;"
+          done
+
       - name: Set up .env from secret
         run: echo "${{ secrets.ENV_FILE }}" > .env
         shell: bash
