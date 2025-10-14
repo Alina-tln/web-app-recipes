@@ -46,7 +46,7 @@ class Recipe(Base):
     cooking_time_in_minutes = Column(Integer)
     image_url = Column(String(1000))
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
-    updated_at = Column(TIMESTAMP(timezone=True), server_default=func.now(),onupdate=func.now())
+    updated_at = Column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
 
     ingredients = relationship("Ingredient", secondary=RecipeIngredient.__table__, back_populates="recipes")
     user_recipes = relationship("UserRecipe", back_populates="base_recipe")
