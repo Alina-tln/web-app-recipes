@@ -5,7 +5,7 @@ from typing import Any, Generator
 
 from recipe_service.core.dependencies import get_session
 from recipe_service.main import app
-from recipe_service.pydantic_schemas.ingredients_schemas import CategoryReadSchema
+from recipe_service.pydantic_schemas.ingredients_schemas import CategoryReadSchema, IngredientReadSchema
 
 
 # The setup_async_session fixture from conftest.py
@@ -194,5 +194,45 @@ async def test_delete_category_not_found(client: AsyncClient):
     """Testing deletion of non-existent category (HTTP 404)."""
     response = await client.delete("/ingredient_category/999")
 
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Category not found"
+
+@pytest.mark.asyncio
+async def test_get_ingredients_by_category(client: AsyncClient, setup_async_session):
+    """
+    Test retrieving all ingredients by category.
+    """
+    # Creating categories
+    response = await client.post("/ingredient_category", json={"name": "Dairy"})
+    assert response.status_code == 200
+    category_id = response.json()["id"]
+
+    response = await client.post("/ingredient_category", json={"name": "Fruits"})
+    assert response.status_code == 200
+    fruits_category_id = response.json()["id"]
+
+    # Creating ingredients
+    response = await client.post("/ingredients", json={"name": "Cheese", "categories": [category_id]})
+    assert response.status_code == 200
+    response = await client.post("/ingredients", json={"name": "Milk", "categories": [category_id]})
+    assert response.status_code == 200
+    response = await client.post("/ingredients", json={"name": "Apple", "categories": [fruits_category_id]})
+    assert response.status_code == 200
+
+    # Retrieving ingredients of category "Dairy"
+    response = await client.get(f"/ingredient_category/{category_id}/ingredients")
+    assert response.status_code == 200
+    ingredients = response.json()
+
+    # Checking that only Dairy ingredients have been returned.
+    ingredient_names = [i["name"] for i in ingredients]
+    assert set(ingredient_names) == {"Cheese", "Milk"}
+
+    # Checking that Pydantic validates the response
+    for ing in ingredients:
+        IngredientReadSchema.model_validate(ing)
+
+    # Attempt to obtain ingredients of a non-existent category
+    response = await client.get("/ingredient_category/999/ingredients")
     assert response.status_code == 404
     assert response.json()["detail"] == "Category not found"
