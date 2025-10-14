@@ -91,4 +91,34 @@ category_examples = {
             }
         },
     },
+    "get_ingredients_by_category": {
+        "responses": {
+            200: {
+                "description": "Ingredient list",
+                "content": {
+                    "application/json": {
+                        "example": [
+                            {"id": 1,
+                             "name": "Cheese",
+                             "categories": [{"id": 1,
+                                             "name": "Dairy"},
+                                            {"id": 2,
+                                             "name": "Snacks"}]
+                             },
+                            {"id": 1,
+                             "name": "Milk",
+                             "categories": [{"id": 1,
+                                             "name": "Dairy"}]
+                             },
+                            {"id": 1,
+                             "name": "Yogurt",
+                             "categories": [{"id": 1,
+                                             "name": "Dairy"}]
+                             },
+                        ]
+                    }
+                },
+            }
+        },
+    },
 }

@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Sequence, Type
 
-from sqlalchemy.orm import InstrumentedAttribute
+from sqlalchemy.orm import InstrumentedAttribute, selectinload
 
 from recipe_service.models import ingredients_models as models
 import logging
@@ -65,6 +65,19 @@ class CategoryService:
         if category is None:
             raise CategoryNotFound(category_id)
         return category
+
+    async def get_ingredients_by_category_id(self, category_id: int) -> Sequence[models.Ingredient]:
+        """Return ingredients by category id"""
+        result = await self.session.execute(
+            select(models.Category)
+            .options(selectinload(models.Category.ingredients)
+                     .selectinload(models.Ingredient.categories))
+            .where(models.Category.id == category_id)
+        )
+        category = result.scalar_one_or_none()
+        if category is None:
+            raise CategoryNotFound(category_id)
+        return category.ingredients
 
     async def update_category(
             self,

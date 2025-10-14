@@ -8,6 +8,7 @@ from fastapi import HTTPException, status, APIRouter
 # 3. Local application imports
 import recipe_service.pydantic_schemas.ingredients_schemas as schemas
 from recipe_service.examples.category_examples import category_examples
+from recipe_service.examples.ingredient_examples import ingredient_examples
 
 from recipe_service.services.category_service import (
     CategoryAlreadyExists,
@@ -91,6 +92,23 @@ async def get_category_by_id(
     category = await service.get_category_by_id(category_id)
     logger.info(f"Retrieved category ID={category.id}")
     return category
+
+
+# GET INGREDIENTS BY CATEGORY ID
+@router.get(
+    "/{category_id}/ingredients",
+    summary="Get ingredients by category ID",
+    response_model=List[schemas.IngredientReadSchema],
+    openapi_extra=category_examples["get_ingredients_by_category"]
+)
+@handle_not_found
+async def get_ingredients_by_category_id(
+        category_id: int,
+        service: CategoryServiceDep
+):
+    ingredients = await service.get_ingredients_by_category_id(category_id)
+    logger.info(f"Retrieved {len(ingredients)} ingredients for category ID={category_id}")
+    return ingredients
 
 
 # UPDATE
