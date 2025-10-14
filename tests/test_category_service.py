@@ -197,6 +197,7 @@ async def test_delete_category_not_found(client: AsyncClient):
     assert response.status_code == 404
     assert response.json()["detail"] == "Category not found"
 
+
 @pytest.mark.asyncio
 async def test_get_ingredients_by_category(client: AsyncClient, setup_async_session):
     """
