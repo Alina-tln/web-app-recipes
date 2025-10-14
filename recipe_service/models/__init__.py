@@ -1,12 +1,23 @@
-from recipe_service.models.ingredients_models import Ingredient, Category
-from recipe_service.models.recipes_models import Recipe
-from translation_service.models.translations import Language
-from user_service.models.users import User
+from .ingredients_models import (
+    Ingredient,
+    Category,
+    IngredientCategory
+)
+from .recipes_models import (
+    Recipe,
+    RecipeIngredient,
+    UserRecipe,
+    UserRecipeIngredient,
+    Unit
+)
 
 __all__ = [
     "Ingredient",
     "Category",
+    "IngredientCategory",
     "Recipe",
-    "Language",
-    "User"
+    "RecipeIngredient",
+    "UserRecipe",
+    "UserRecipeIngredient",
+    "Unit"
 ]
