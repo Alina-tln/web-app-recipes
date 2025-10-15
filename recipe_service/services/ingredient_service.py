@@ -25,7 +25,7 @@ class IngredientNotFound(Exception):
 
 
 # ----------------------------------------------------------
-# Category service
+# Ingredient service
 # ----------------------------------------------------------
 class IngredientService:
     """Service class for managing ingredient."""

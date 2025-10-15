@@ -15,15 +15,22 @@ class RecipeSchema(BaseSchema):
     image_url: str | None = Field(default=None, max_length=1000)
 
 
+class RecipeIngredientInput(BaseSchema):
+    ingredient_id: int
+    quantity: float = Field(gt=0)
+    unit_id: int | None = None
+
+
 class RecipeCreateSchema(RecipeSchema):
     author_id: int | None = Field(default=None)
-    ingredient_ids: List[int] = Field(default_factory=list)
+    ingredients: List[RecipeIngredientInput] = Field(default_factory=list)
+
 
 
 class RecipeUpdateSchema(BaseSchema):
     cooking_time_in_minutes: int | None = Field(default=None, ge=0, le=1200)
     image_url: str | None = Field(default=None, max_length=1000)
-    ingredient_ids: List[int] = Field(default_factory=list)
+    ingredients: List[RecipeIngredientInput] | None = None
 
 
 class RecipeReadSchema(RecipeSchema):
