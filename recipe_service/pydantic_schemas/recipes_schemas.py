@@ -26,7 +26,6 @@ class RecipeCreateSchema(RecipeSchema):
     ingredients: List[RecipeIngredientInput] = Field(default_factory=list)
 
 
-
 class RecipeUpdateSchema(BaseSchema):
     cooking_time_in_minutes: int | None = Field(default=None, ge=0, le=1200)
     image_url: str | None = Field(default=None, max_length=1000)
