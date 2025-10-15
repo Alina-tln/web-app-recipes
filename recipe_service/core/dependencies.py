@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database import async_session
 from recipe_service.services.category_service import CategoryService
 from recipe_service.services.ingredient_service import IngredientService
+from recipe_service.services.recipe_service import RecipeService
 
 # ----------------------------------------------------------
 # Setting up logging
@@ -50,3 +51,12 @@ def get_ingredient_service(session: SessionDep) -> IngredientService:
 
 
 IngredientServiceDep = Annotated[CategoryService, Depends(get_ingredient_service)]
+
+
+# Recipe Service
+def get_recipe_service(session: SessionDep) -> RecipeService:
+    """A dependency that provides an instance of RecipeService."""
+    return RecipeService(session)
+
+
+RecipeServiceDep = Annotated[CategoryService, Depends(get_ingredient_service)]

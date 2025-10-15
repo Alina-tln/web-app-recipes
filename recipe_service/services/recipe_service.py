@@ -1,4 +1,6 @@
 import logging
+from typing import Sequence
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete, and_
 from sqlalchemy.orm import selectinload
@@ -166,7 +168,7 @@ class RecipeService:
         return recipe
 
     # ------------------ READ ------------------
-    async def get_all_recipes(self) -> list[Recipe]:
+    async def get_all_recipes(self) -> Sequence[Recipe]:
         result = await self.session.execute(
             select(self.Recipe)
             .options(selectinload(self.Recipe.ingredients)
