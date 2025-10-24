@@ -10,7 +10,6 @@ import recipe_service.pydantic_schemas.recipes_schemas as schemas
 from recipe_service.examples.recipe_examples import recipe_examples
 
 from recipe_service.services.recipe_service import (
-    RecipeService,
     RecipeAlreadyExists,
     RecipeNotFound,
     IngredientNotFound
