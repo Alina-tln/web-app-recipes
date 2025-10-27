@@ -70,8 +70,8 @@ def test_recipe_author_and_ingredients(sample_data):
     ingredient = sample_data["ingredient"]
 
     assert recipe.author_id == 1
-    assert ingredient in recipe.ingredients
-    assert recipe in ingredient.recipes
+    assert ingredient in [ri.ingredient for ri in recipe.ingredients]
+    assert recipe in [ri.recipe for ri in ingredient.recipe_ingredients]
 
 
 def test_category_ingredient(sample_data):

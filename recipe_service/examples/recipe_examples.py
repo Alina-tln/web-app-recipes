@@ -2,13 +2,12 @@ recipe_examples = {
     "get_all": {
         "responses": {
             200: {
-                "description": "Recipe list",
+                "description": "Recipe metadata list",
                 "content": {
                     "application/json": {
                         "example": [
                             {
                                 "id": 1,
-                                "author_id": 101,
                                 "cooking_time_in_minutes": 30,
                                 "image_url": "https://example.com/image1.jpg",
                                 "ingredients": [
@@ -18,7 +17,6 @@ recipe_examples = {
                             },
                             {
                                 "id": 2,
-                                "author_id": 102,
                                 "cooking_time_in_minutes": 15,
                                 "image_url": "https://example.com/image2.jpg",
                                 "ingredients": [
@@ -35,12 +33,11 @@ recipe_examples = {
     "get_one": {
         "responses": {
             200: {
-                "description": "Recipe details",
+                "description": "Recipe metadata details",
                 "content": {
                     "application/json": {
                         "example": {
                             "id": 1,
-                            "author_id": 101,
                             "cooking_time_in_minutes": 30,
                             "image_url": "https://example.com/image1.jpg",
                             "ingredients": [
@@ -56,11 +53,10 @@ recipe_examples = {
 
     "create": {
         "requestBody": {
-            "description": "Data to create a new recipe",
+            "description": "Data to create a new recipe (metadata only)",
             "content": {
                 "application/json": {
                     "example": {
-                        "author_id": 101,
                         "cooking_time_in_minutes": 30,
                         "image_url": "https://example.com/image1.jpg",
                         "ingredients": [
@@ -75,7 +71,7 @@ recipe_examples = {
 
     "update": {
         "requestBody": {
-            "description": "Data to update an existing recipe",
+            "description": "Data to update an existing recipe (metadata only)",
             "content": {
                 "application/json": {
                     "example": {
@@ -100,7 +96,7 @@ recipe_examples = {
                         "example": {
                             "Result": True,
                             "id": 1,
-                            "name": "Spaghetti Carbonara"
+                            "name": "Sample Recipe Name"
                         }
                     }
                 }

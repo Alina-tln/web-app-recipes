@@ -32,6 +32,8 @@ class RecipeIngredient(Base):
     unit_id = Column(BigInteger, ForeignKey("recipes.units.id"), nullable=True)
 
     unit = relationship("Unit", back_populates="recipe_ingredients")
+    recipe = relationship("Recipe", back_populates="ingredients")
+    ingredient = relationship("Ingredient", back_populates="recipe_ingredients")
 
     def __repr__(self):
         return f"<RecipeIngredient(recipe_id={self.recipe_id}, ingredient_id={self.ingredient_id}, quantity={self.quantity})>"
@@ -48,7 +50,8 @@ class Recipe(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    ingredients = relationship("Ingredient", secondary=RecipeIngredient.__table__, back_populates="recipes")
+    ingredients = relationship("RecipeIngredient", back_populates="recipe", cascade="all, delete-orphan")
+
     user_recipes = relationship("UserRecipe", back_populates="base_recipe")
 
     def __repr__(self):

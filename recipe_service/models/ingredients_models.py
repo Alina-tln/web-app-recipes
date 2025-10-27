@@ -32,10 +32,9 @@ class Ingredient(Base):
                               back_populates="ingredients",
                               lazy="selectin"
                               )
-    recipes = relationship("Recipe",
-                           secondary="recipes.recipe_ingredients",
-                           back_populates="ingredients"
-                           )
+    recipe_ingredients = relationship("RecipeIngredient",
+                                      back_populates="ingredient")
+
     user_recipes = relationship("UserRecipeIngredient",
                                 back_populates="ingredient"
                                 )

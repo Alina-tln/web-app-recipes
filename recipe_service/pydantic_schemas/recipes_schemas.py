@@ -15,40 +15,28 @@ class RecipeSchema(BaseSchema):
     image_url: str | None = Field(default=None, max_length=1000)
 
 
-class RecipeIngredientInput(BaseSchema):
+class RecipeIngredientSchema(BaseSchema):
     ingredient_id: int
     quantity: float = Field(gt=0)
     unit_id: int | None = None
 
 
 class RecipeCreateSchema(RecipeSchema):
-    author_id: int | None = Field(default=None)
-    ingredients: List[RecipeIngredientInput] = Field(default_factory=list)
+    ingredients: List[RecipeIngredientSchema] = Field(default_factory=list)
 
 
-class RecipeUpdateSchema(BaseSchema):
+class RecipeUpdateSchema(RecipeSchema):
+    ingredients: List[RecipeIngredientSchema] | None = Field(default=None)
+
+
+class RecipeReadSchema(BaseSchema):
+    id: int
+    author_id: int | None
     cooking_time_in_minutes: int | None = Field(default=None, ge=0, le=1200)
     image_url: str | None = Field(default=None, max_length=1000)
-    ingredients: List[RecipeIngredientInput] | None = None
-
-
-class RecipeReadSchema(RecipeSchema):
-    id: int
-    author_id: int | None = Field(default=None)
+    ingredients: List[RecipeIngredientSchema] | None = Field(default=None)
     created_at: datetime
     updated_at: datetime
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-# ----------------------------------------------------------
-# Recipe Ingredient Schemas
-# ----------------------------------------------------------
-class RecipeIngredientSchema(BaseSchema):
-    recipe_id: int
-    ingredient_id: int
-    quantity: float = Field(gt=0)
-    unit_id: int | None = Field(default=None)
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -68,11 +56,15 @@ class UserRecipeCreateSchema(UserRecipeSchema):
     user_id: int
 
 
-class UserRecipeReadSchema(UserRecipeSchema):
+class UserRecipeReadSchema(BaseSchema):
     id: int
     base_recipe_id: int
     user_id: int
     updated_at: datetime
+    cooking_time_in_minutes: int | None = Field(default=None, ge=0, le=1200)
+    title: str = Field(max_length=100)
+    description: str | None = Field(default=None, max_length=1000)
+    instructions: str
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -95,3 +87,12 @@ class UnitSchema(BaseSchema):
     symbol: str = Field(max_length=10)
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# ----------------------------------------------------------
+#  Delete Response Schema
+# ----------------------------------------------------------
+class DeleteResponseSchema(BaseModel):
+    Result: bool
+    id: int
+    name: str | None =Field(default=None)

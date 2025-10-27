@@ -5,7 +5,7 @@ import uvicorn
 
 from recipe_service.routers.ingredients import category_router, ingredient_router
 from recipe_service.core.dependencies import logger
-
+from recipe_service.routers.recipes import recipe_router
 
 # ----------------------------------------------------------
 # Initializing the Application
@@ -42,6 +42,8 @@ async def db_error_middleware(request: Request, call_next):
 
 app.include_router(category_router.router, tags=["Categories"])
 app.include_router(ingredient_router.router, tags=["Ingredients"])
+app.include_router(recipe_router.router, tags=["Recipes"])
+
 
 # ----------------------------------------------------------
 # Entrypoint (dev only)

@@ -20,8 +20,8 @@ class IngredientAlreadyExists(Exception):
 
 class IngredientNotFound(Exception):
     """Exception thrown when ingredient by ID is not found."""
-    def __init__(self, category_id: int):
-        super().__init__(f"Ingredient with ID {category_id} not found.")
+    def __init__(self, ingredient_id: int):
+        super().__init__(f"Ingredient with ID {ingredient_id} not found.")
 
 
 # ----------------------------------------------------------
