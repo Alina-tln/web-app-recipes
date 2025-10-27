@@ -66,7 +66,8 @@ class CategoryService:
             raise CategoryNotFound(category_id)
         return category
 
-    async def get_ingredients_by_category_id(self, category_id: int) -> Sequence[models.Ingredient]:
+    async def get_ingredients_by_category_id(self, category_id: int) -> (
+            Sequence)[models.Ingredient]:
         """Return ingredients by category id"""
         result = await self.session.execute(
             select(models.Category)

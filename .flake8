@@ -9,6 +9,8 @@ exclude =
     .venv,
     .idea,
     data
+    alembic/versions
+    alembic/env.py
 
 # Ignoring some errors that conflict with Black
 ignore =

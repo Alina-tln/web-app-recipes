@@ -32,13 +32,14 @@ async def get_session() -> AsyncGenerator[Any, Any]:
             yield session
             logger.debug("Session successfully yielded")
         except IntegrityError as e:
-            # Roll back a transaction if constraints (unique, foreign key, etc.) are violated.
+            # Roll back a transaction if constraints
+            # (unique, foreign key, etc.) are violated.
             await session.rollback()
             logger.warning(f"Integrity error: {e.orig}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Integrity error: {e.orig}"
-            )
+            ) from e
         except SQLAlchemyError as e:
             # Any other SQLAlchemy errors (problems with transaction, query, etc.)
             await session.rollback()
@@ -46,7 +47,7 @@ async def get_session() -> AsyncGenerator[Any, Any]:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Internal database error"
-            )
+            ) from e
         except Exception as e:
             # Unknown errors (we log and forward them further)
             await session.rollback()

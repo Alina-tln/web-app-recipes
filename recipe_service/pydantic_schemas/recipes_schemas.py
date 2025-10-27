@@ -95,4 +95,4 @@ class UnitSchema(BaseSchema):
 class DeleteResponseSchema(BaseModel):
     Result: bool
     id: int
-    name: str | None =Field(default=None)
+    name: str | None = Field(default=None)

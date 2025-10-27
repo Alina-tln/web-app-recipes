@@ -106,7 +106,8 @@ async def get_ingredients_by_category_id(
         service: CategoryServiceDep
 ):
     ingredients = await service.get_ingredients_by_category_id(category_id)
-    logger.info(f"Retrieved {len(ingredients)} ingredients for category ID={category_id}")
+    logger.info(f"Retrieved {len(ingredients)} "
+                f"ingredients for category ID={category_id}")
     return ingredients
 
 

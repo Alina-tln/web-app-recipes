@@ -5,7 +5,9 @@ from typing import Any, Generator
 
 from recipe_service.core.dependencies import get_session
 from recipe_service.main import app
-from recipe_service.pydantic_schemas.ingredients_schemas import CategoryReadSchema, IngredientReadSchema
+from recipe_service.pydantic_schemas.ingredients_schemas import (
+    CategoryReadSchema,
+    IngredientReadSchema)
 
 
 # The setup_async_session fixture from conftest.py
@@ -213,11 +215,17 @@ async def test_get_ingredients_by_category(client: AsyncClient, setup_async_sess
     fruits_category_id = response.json()["id"]
 
     # Creating ingredients
-    response = await client.post("/ingredients", json={"name": "Cheese", "categories": [category_id]})
+    response = await client.post(
+        "/ingredients",
+        json={"name": "Cheese", "categories": [category_id]})
     assert response.status_code == 200
-    response = await client.post("/ingredients", json={"name": "Milk", "categories": [category_id]})
+    response = await client.post(
+        "/ingredients",
+        json={"name": "Milk", "categories": [category_id]})
     assert response.status_code == 200
-    response = await client.post("/ingredients", json={"name": "Apple", "categories": [fruits_category_id]})
+    response = await client.post(
+        "/ingredients",
+        json={"name": "Apple", "categories": [fruits_category_id]})
     assert response.status_code == 200
 
     # Retrieving ingredients of category "Dairy"

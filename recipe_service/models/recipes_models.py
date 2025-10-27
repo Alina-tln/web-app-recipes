@@ -36,7 +36,8 @@ class RecipeIngredient(Base):
     ingredient = relationship("Ingredient", back_populates="recipe_ingredients")
 
     def __repr__(self):
-        return f"<RecipeIngredient(recipe_id={self.recipe_id}, ingredient_id={self.ingredient_id}, quantity={self.quantity})>"
+        return (f"<RecipeIngredient(recipe_id={self.recipe_id}, "
+                f"ingredient_id={self.ingredient_id}, quantity={self.quantity})>")
 
 
 class Recipe(Base):
@@ -48,9 +49,17 @@ class Recipe(Base):
     cooking_time_in_minutes = Column(Integer)
     image_url = Column(String(1000))
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
-    updated_at = Column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        TIMESTAMP(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now()
+    )
 
-    ingredients = relationship("RecipeIngredient", back_populates="recipe", cascade="all, delete-orphan")
+    ingredients = relationship(
+        "RecipeIngredient",
+        back_populates="recipe",
+        cascade="all, delete-orphan"
+    )
 
     user_recipes = relationship("UserRecipe", back_populates="base_recipe")
 
@@ -64,7 +73,11 @@ class UserRecipe(Base):
     __table_args__ = {'schema': 'recipes'}
 
     id = Column(BigInteger, primary_key=True)
-    base_recipe_id = Column(BigInteger, ForeignKey("recipes.recipes.id"), nullable=False)
+    base_recipe_id = Column(
+        BigInteger,
+        ForeignKey("recipes.recipes.id"),
+        nullable=False
+    )
     user_id = Column(BigInteger, nullable=False)
     cooking_time_in_minutes = Column(Integer)
     title = Column(String(100), nullable=False)
