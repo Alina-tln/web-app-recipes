@@ -9,20 +9,28 @@ from recipe_service.pydantic_schemas.recipes_schemas import (
 )
 
 
+
+
 class RecipeAlreadyExists(Exception):
     pass
+
+
 
 
 class RecipeNotFound(Exception):
     pass
 
 
+
+
 class IngredientNotFound(Exception):
     pass
+
 
 class RecipeService:
     def __init__(self, session: AsyncSession):
         self.session = session
+
 
     async def _validate_ingredients(self, ingredient_ids: list[int]):
         result = await self.session.scalars(
@@ -32,6 +40,7 @@ class RecipeService:
         missing = set(ingredient_ids) - {i.id for i in ingredients}
         if missing:
             raise IngredientNotFound(list(missing))
+
 
     async def create_recipe(self, data: RecipeCreateSchema, author_id: int | None = None):
         await self._validate_ingredients([i.ingredient_id for i in data.ingredients])
@@ -63,11 +72,13 @@ class RecipeService:
         recipe = result.scalar_one()
         return recipe
 
+
     async def get_all_recipes(self):
         result = await self.session.execute(
             select(Recipe).options(selectinload(Recipe.ingredients))
         )
         return result.scalars().all()
+
 
     async def get_recipe_by_id(self, recipe_id: int):
         result = await self.session.execute(
@@ -80,9 +91,11 @@ class RecipeService:
             raise RecipeNotFound
         return recipe
 
+
     async def update_recipe(self, recipe_id: int, data: RecipeUpdateSchema):
         recipe = await self.get_recipe_by_id(recipe_id)
         updated = False
+
 
         if data.cooking_time_in_minutes is not None:
             recipe.cooking_time_in_minutes = data.cooking_time_in_minutes
@@ -106,10 +119,12 @@ class RecipeService:
             ])
             updated = True
 
+
         if updated:
             await self.session.commit()
             await self.session.refresh(recipe)
         return recipe
+
 
     async def delete_recipe(self, recipe_id: int):
         recipe = await self.get_recipe_by_id(recipe_id)
