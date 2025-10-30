@@ -102,5 +102,36 @@ recipe_examples = {
                 }
             }
         }
+    },
+    "search": {
+        "responses": {
+            200: {
+                "description": "Recipe metadata list",
+                "content": {
+                    "application/json": {
+                        "example": [
+                            {
+                                "id": 1,
+                                "cooking_time_in_minutes": 30,
+                                "image_url": "https://example.com/image1.jpg",
+                                "ingredients": [
+                                    {"ingredient_id": 1, "quantity": 100, "unit_id": 1},
+                                    {"ingredient_id": 2, "quantity": 200, "unit_id": 2}
+                                ]
+                            },
+                            {
+                                "id": 2,
+                                "cooking_time_in_minutes": 15,
+                                "image_url": "https://example.com/image2.jpg",
+                                "ingredients": [
+                                    {"ingredient_id": 1, "quantity": 100, "unit_id": 1},
+                                    {"ingredient_id": 2, "quantity": 200, "unit_id": 2}
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,7 @@
+from typing import Literal
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, func, literal
 from sqlalchemy.orm import selectinload
 from recipe_service.models.recipes_models import Recipe, RecipeIngredient
 from recipe_service.models.ingredients_models import Ingredient
@@ -124,3 +126,36 @@ class RecipeService:
         await self.session.delete(recipe)
         await self.session.commit()
         return recipe.id
+
+    async def search_recipes(
+            self,
+            ingredient_ids: list[int],
+            match: Literal["any", "all"] = "any"):
+        """
+        Returns recipes that contain:
+        - 'any' — at least one of the specified ingredients
+        - 'all' — all the specified ingredients
+        """
+        if not ingredient_ids:
+            return []
+
+        query = select(Recipe).join(Recipe.ingredients).options(
+            selectinload(Recipe.ingredients).selectinload(RecipeIngredient.ingredient)
+        )
+
+        if match == "any":
+            query = query.where(RecipeIngredient.ingredient_id.in_(ingredient_ids)).distinct()
+        elif match == "all":
+            # Group by recipe, filter those with the number of matches == ingredient_ids length
+            if match == "all":
+                query = (
+                    query
+                    .where(RecipeIngredient.ingredient_id.in_(ingredient_ids))
+                    .group_by(Recipe.id)
+                    .having(func.count(RecipeIngredient.ingredient_id) == literal(len(ingredient_ids)))
+                )
+        else:
+            raise ValueError("Match must be 'any' or 'all'")
+
+        result = await self.session.execute(query)
+        return result.scalars().all()
